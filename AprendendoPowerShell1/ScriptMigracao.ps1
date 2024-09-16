@@ -25,7 +25,7 @@ $resultado =
                 select $params
 
 
-if ($tipoDeExportacao -eq "HML") {
+if ($tipoDeExportacao -eq "HTML") {
     $estilos = Get-Content c:\scripts\styles.css
     $styleTag = "<styless> $estilos </styles>"
     $tituloPagina = "Relatorio de Scripts em Migracao"
