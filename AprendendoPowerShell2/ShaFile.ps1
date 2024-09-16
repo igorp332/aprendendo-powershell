@@ -1,27 +1,48 @@
-function Get-FileSHA1($filePath) {
-    $fileContent = Get-Content $filePath
-    $fileBytes = [System.Text.Encoding]::UTF8.GetBytes($fileContent)
+function Get-FileSHA1() {
+    param(
+        [Parameter(
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = "FullName",
+            Mandatory = $true
+        )]
+       [string] $filePath
+    )
 
-    $sha1 = New-Object System.Security.Cryptography.SHA1Managed
 
-    $hash = $sha1.ComputeHash($fileBytes)
+    begin {
+        $sha1 = New-Object System.Security.Cryptography.SHA1Managed
+        $prettyHashSB = New-Object System.Text.StringBuilder
+    }
+    
+    process {
+        
+        $fileContent = Get-Content $filePath
+        $fileBytes = [System.Text.Encoding]::UTF8.GetBytes($fileContent)
 
-    $prettyHashSB = New-Object System.Text.StringBuilder
-    foreach ($byte in $hash) {
-        $hexaNotation = $byte.ToString("X2")
-        $prettyHashSB.Append($hexaNotation) > $null
+
+        $hash = $sha1.ComputeHash($fileBytes)
+        
+        foreach ($byte in $hash) {
+            $hexaNotation = $byte.ToString("X2")
+            $prettyHashSB.Append($hexaNotation) > $null
+        }
+
+        $prettyHashSB.ToString()
+        
+        $prettyHashSB.Clear() > $null
+        
+    }
+    
+    end {
+        $sha1.Dispose()
     }
 
-    $prettyHashSB.ToString() 
 }
+  
 $arquivo = "C:\Users\igorp\OneDrive\Área de Trabalho\File.SHA.ps1"
 $hashDoArquivo = Get-FileSHA1 $arquivo
-
-
+        
 Write-Host "O hash do arquvivo $arquivo é $hashDoArquivo" -BackgroundColor Red -ForegroundColor Yellow
- 
-
-
 
 
 
@@ -61,4 +82,4 @@ function Get-FileSHA256($filePath) {
 
 }
 function Get-FileSHA385() {}
-function Get-FileSHA512() {}
+function Get-FileSHA512() {}    
